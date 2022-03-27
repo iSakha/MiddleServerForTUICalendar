@@ -81,20 +81,24 @@ app.get("/events", function (request, response) {
 // --------------------------------------------------------------------
 app.post("/events", urlencodedParser, function (request, response) {
     if (!request.body) return response.sendStatus(400);
-    console.log(request.body);
+    console.log("post.request.body", request.body);
     // readEvents(response);
     return createEvent(request.body, response)
+    // response.send(request.body);
 });
 
 //  DELETE event
 // --------------------------------------------------------------------
-// app.post("/events", urlencodedParser, function (request, response) {
-//     if (!request.body) return response.sendStatus(400);
-//     console.log(request.body);
-//     // readEvents(response);
-//     response.send(request.body);
-// });
+app.delete("/events", urlencodedParser, function (request, response) {
+    if (!request.body) return response.sendStatus(400);
+    console.log("delete.request.body", request.body);
+    return deleteEvent(request.body, response);
+    // response.send(request.body);
+});
 
+// app.get("/del_event", function (request, response) {
+//     response.json({id:7});
+// });
 
 function readEvents(response) {
     connection = mysql.createConnection(config);
@@ -128,13 +132,17 @@ function createEvent(data, response) {
 
 function deleteEvent(data, response) {
     connection = mysql.createConnection(config);
-    let dataArray = [data.id];
-    console.log("dataArray", dataArray);
-    // const sql = "DELETE FROM events(calendarId, title, start, end, location) VALUES(?, ?, ?, ?, ?)";
-    // connection.query(sql, dataArray, function (err, results) {
-    // if (err) return console.log(err);
-    readEvents(response);
-    //   });
+    console.log("data.id", data.id);
+    // execute will internally call prepare and query
+    connection.execute(
+        "DELETE FROM `events` WHERE `id` = ?",
+        [data.id],
+        function (err, results, fields) {
+            if (err) return console.log(err);
+            readEvents(response);
+            console.log(results); // results contains rows returned by server
+        }
+    )
 }
 
 
