@@ -117,12 +117,22 @@ function readEvents(response) {
 
 function createEvent(data, response) {
     connection = mysql.createConnection(config);
-    let str = data.start;
-    data.start = str.substr(0, 19);
-    str = data.end;
-    data.end = str.substr(0, 19);
-    let dataArray = [data.calendarId, data.title, data.start, data.end, data.location];
+    // let str = data.start;
+    // data.start = str.substr(0, 19);
+    let dateStartObj = new Date(data.start);
+    // let dateStart = dateStartObj.toUTCString();
+    let dateEndObj = new Date(data.end);
+    // let dateEnd = dateEndObj.toUTCString();
+
+    // str = data.end;
+
+    // data.end = str.substr(0, 19);
+    console.log("data.start:", dateStartObj);
+    
+
+    let dataArray = [data.calendarId, data.title, dateStartObj, dateEndObj, data.location];
     console.log("dataArray", dataArray);
+    
     const sql = "INSERT INTO events(calendarId, title, start, end, location) VALUES(?, ?, ?, ?, ?)";
     connection.query(sql, dataArray, function (err, results) {
         if (err) return console.log(err);
