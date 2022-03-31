@@ -61,12 +61,6 @@ app.get('/', function (req, res) {
 
 //  READ calendars
 // --------------------------------------------------------------------
-// app.post("/calendars", urlencodedParser, function (request, response) {
-//     if (!request.body) return response.sendStatus(400);
-//     console.log(request.body);
-//     response.send(calendarsObj);
-// });
-
 app.get("/calendars", function (request, response) {
     response.json(calendarsObj)
 });
@@ -96,9 +90,14 @@ app.delete("/events", urlencodedParser, function (request, response) {
     // response.send(request.body);
 });
 
-// app.get("/del_event", function (request, response) {
-//     response.json({id:7});
-// });
+//  UPDATE event
+// --------------------------------------------------------------------
+app.put("/events", urlencodedParser, function (request, response) {
+    if (!request.body) return response.sendStatus(400);
+    console.log("update.request.body", request.body);
+    // return deleteEvent(request.body, response);
+    response.send(request.body);
+});
 
 function readEvents(response) {
     connection = mysql.createConnection(config);
@@ -117,19 +116,11 @@ function readEvents(response) {
 
 function createEvent(data, response) {
     connection = mysql.createConnection(config);
-    // let str = data.start;
-    // data.start = str.substr(0, 19);
     let dateStartObj = new Date(data.start);
-    // let dateStart = dateStartObj.toUTCString();
     let dateEndObj = new Date(data.end);
-    // let dateEnd = dateEndObj.toUTCString();
 
-    // str = data.end;
-
-    // data.end = str.substr(0, 19);
     console.log("data.start:", dateStartObj);
     
-
     let dataArray = [data.calendarId, data.title, dateStartObj, dateEndObj, data.location];
     console.log("dataArray", dataArray);
     
@@ -153,6 +144,23 @@ function deleteEvent(data, response) {
             console.log(results); // results contains rows returned by server
         }
     )
+}
+
+function updateEvent(data, response) {
+    connection = mysql.createConnection(config);
+    let dateStartObj = new Date(data.start);
+    let dateEndObj = new Date(data.end);
+
+    console.log("data.start:", dateStartObj);
+    
+    let dataArray = [data.calendarId, data.title, dateStartObj, dateEndObj, data.location];
+    console.log("dataArray", dataArray);
+    
+    const sql = "INSERT INTO events(calendarId, title, start, end, location) VALUES(?, ?, ?, ?, ?)";
+    connection.query(sql, dataArray, function (err, results) {
+        if (err) return console.log(err);
+        readEvents(response);
+    });
 }
 
 
