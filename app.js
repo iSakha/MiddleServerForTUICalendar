@@ -95,8 +95,8 @@ app.delete("/events", urlencodedParser, function (request, response) {
 app.put("/events", urlencodedParser, function (request, response) {
     if (!request.body) return response.sendStatus(400);
     console.log("update.request.body", request.body);
-    // return deleteEvent(request.body, response);
-    response.send(request.body);
+    return updateEvent(request.body, response);
+    // response.send(request.body);
 });
 
 function readEvents(response) {
