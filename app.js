@@ -153,10 +153,10 @@ function updateEvent(data, response) {
 
     console.log("data.start:", dateStartObj);
     
-    let dataArray = [data.calendarId, data.title, dateStartObj, dateEndObj, data.location];
+    let dataArray = [data.calendarId, data.title, dateStartObj, dateEndObj, data.location, data.id];
     console.log("dataArray", dataArray);
     
-    const sql = "INSERT INTO events(calendarId, title, start, end, location) VALUES(?, ?, ?, ?, ?)";
+    const sql = "UPDATE events SET calendarId=?, title=?, start=?, end=?, location=? WHERE id=?";
     connection.query(sql, dataArray, function (err, results) {
         if (err) return console.log(err);
         readEvents(response);
